@@ -1967,5 +1967,59 @@
 })();
 </script>
 
+<section id="module4" style="margin-top:40px;padding:25px;background:#f8fbfe;border-radius:12px;border:1px solid #d7e1eb;">
+<h2>Модуль 4: журнал проверок качества</h2>
+<form id="module4Form">
+<label>Дата <input type="date" name="Дата" required></label>
+<button type="submit">Сохранить в таблицу</button>
+<p id="module4Message" style="margin-top:10px;font-weight:700;"></p>
+</form>
+</section>
+
 </body>
+<script>
+const MODULE_NAME = 'Вариант 6. журнал проверок качества';
+const SCRIPT_URL  = 'https://script.google.com/macros/s/https://docs.google.com/spreadsheets/d/1-RuZwUVi9zCLt8h9i3OXRJ7BjkU5moHQBAW_p5szQ8/edit?usp=sharing/exec';
+
+document.getElementById('module4Form').addEventListener('submit', async function (e) {
+e.preventDefault();
+const form = this;
+const msg  = document.getElementById('module4Message');
+const btn  = form.querySelector('button[type="submit"]');
+
+const fields = {};
+new FormData(form).forEach((value, key) => {
+fields[key] = String(value).trim();
+});
+
+for (const [name, value] of Object.entries(fields)) {
+if (!value) {
+msg.textContent = 'Заполните поле: ' + name;
+msg.style.color = '#a83a35';
+return;
+}
+}
+
+const dataToSend = { module: MODULE_NAME, fields: fields };
+btn.disabled = true;
+msg.textContent = 'Отправка...';
+msg.style.color = '#2468a0';
+
+try {
+await fetch(SCRIPT_URL, {
+method: 'POST',
+mode: 'no-cors',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+body: JSON.stringify(dataToSend)
+});
+msg.textContent = 'Запрос отправлен. Проверьте таблицу.';
+msg.style.color = '#267747';
+} catch (err) {
+msg.textContent = 'Ошибка: ' + err.message;
+msg.style.color = '#a83a35';
+} finally {
+btn.disabled = false;
+}
+});
+</script>
 </html>
